@@ -1,16 +1,43 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import React from 'react';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import React, { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { useStore } from '@/store/useStore';
 
-export default function TabLayout() {
+export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const hasOnboarded = useStore((s) => s.settings.hasOnboarded);
+  const router = useRouter();
+  const segments = useSegments();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const inOnboarding = segments[0] === 'onboarding';
+
+      if (!hasOnboarded && !inOnboarding) {
+        router.replace('/onboarding');
+      } else if (hasOnboarded && inOnboarding) {
+        router.replace('/(tabs)');
+      }
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, [hasOnboarded, segments, router]);
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="add-expense"
+          options={{
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+      </Stack>
     </ThemeProvider>
   );
 }
