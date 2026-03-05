@@ -1,4 +1,12 @@
-export type CategoryKey = 'food' | 'transport' | 'bills' | 'shopping' | 'health' | 'fun' | 'other';
+export type CategoryKey =
+  | "food"
+  | "transport"
+  | "bills"
+  | "shopping"
+  | "health"
+  | "fun"
+  | "travel"
+  | "other";
 
 export interface Expense {
   id: string;
@@ -8,11 +16,20 @@ export interface Expense {
   note?: string;
   date: string; // 'YYYY-MM-DD'
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface Settings {
   currency: string;
+  language: string;
   hasOnboarded: boolean;
+  syncUrl: string;
+}
+
+export interface SyncState {
+  lastSyncedAt: string | null;
+  isSyncing: boolean;
+  error: string | null;
 }
 
 export interface Category {

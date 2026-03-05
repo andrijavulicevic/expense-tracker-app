@@ -12,12 +12,14 @@ import { Spacing } from '@/constants/theme';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useMonthNavigation } from '@/hooks/useMonthNavigation';
 import { useTheme } from '@/hooks/use-theme';
+import { useTranslation } from '@/locales/i18n';
 import { useStore } from '@/store/useStore';
 import { CategoryKey } from '@/types';
 import { formatCurrency } from '@/utils/formatCurrency';
 
 export default function StatsScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { year, month, goToPreviousMonth, goToNextMonth, isCurrentMonth } = useMonthNavigation();
   const { monthExpenses, total, breakdown, average } = useExpenses(year, month);
   const currency = useStore((s) => s.settings.currency);
@@ -45,7 +47,7 @@ export default function StatsScreen() {
         <View style={styles.emptyState}>
           <Ionicons name="bar-chart-outline" size={48} color={theme.textSecondary} />
           <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-            No expenses this month
+            {t('stats.noExpenses')}
           </Text>
         </View>
       ) : (
@@ -74,7 +76,7 @@ export default function StatsScreen() {
                       size={16}
                       color={info?.color}
                     />{' '}
-                    {info?.label}
+                    {t(`categories.${item.key}`)}
                   </Text>
                   <Text style={[styles.breakdownAmount, { color: theme.text }]}>
                     {formatCurrency(item.total, currency)}
@@ -97,10 +99,10 @@ export default function StatsScreen() {
 
           <Card style={styles.averageCard}>
             <Text style={[styles.averageLabel, { color: theme.textSecondary }]}>
-              Daily average
+              {t('stats.dailyAverage')}
             </Text>
             <Text style={[styles.averageAmount, { color: theme.text }]}>
-              You spend on average {formatCurrency(average, currency)} per day this month
+              {t('stats.averageText', { amount: formatCurrency(average, currency) })}
             </Text>
           </Card>
         </ScrollView>
@@ -111,13 +113,13 @@ export default function StatsScreen() {
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={handleCloseSheet}>
-        <View style={[styles.sheetContainer, { backgroundColor: theme.background }]}>
+        <SafeAreaView style={[styles.sheetContainer, { backgroundColor: theme.background }]} edges={['top']}>
           <View style={styles.sheetHeader}>
             <Text style={[styles.sheetTitle, { color: theme.text }]}>
-              {selectedCategory ? CATEGORY_MAP[selectedCategory]?.label : ''} Expenses
+              {selectedCategory ? t('stats.categoryExpenses', { category: t(`categories.${selectedCategory}`) }) : ''}
             </Text>
             <Pressable onPress={handleCloseSheet}>
-              <Text style={[styles.sheetClose, { color: '#007AFF' }]}>Done</Text>
+              <Text style={[styles.sheetClose, { color: '#007AFF' }]}>{t('stats.done')}</Text>
             </Pressable>
           </View>
           <FlatList
@@ -133,11 +135,11 @@ export default function StatsScreen() {
             )}
             ListEmptyComponent={
               <Text style={[styles.emptyText, { color: theme.textSecondary, padding: Spacing.four }]}>
-                No expenses in this category
+                {t('stats.noCategory')}
               </Text>
             }
           />
-        </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );

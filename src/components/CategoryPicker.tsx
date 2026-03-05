@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { Chip } from '@/components/ui/Chip';
 import { CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/locales/i18n';
 import { CategoryKey } from '@/types';
 
 interface CategoryPickerProps {
@@ -11,6 +12,8 @@ interface CategoryPickerProps {
 }
 
 export function CategoryPicker({ selected, onSelect }: CategoryPickerProps) {
+  const { t } = useTranslation();
+
   return (
     <ScrollView
       horizontal
@@ -19,7 +22,7 @@ export function CategoryPicker({ selected, onSelect }: CategoryPickerProps) {
       {CATEGORIES.map((cat) => (
         <Chip
           key={cat.key}
-          label={cat.label}
+          label={t(`categories.${cat.key}`)}
           icon={cat.icon}
           color={cat.color}
           selected={selected === cat.key}

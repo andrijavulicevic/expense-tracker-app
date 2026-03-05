@@ -12,19 +12,24 @@ import { Spacing } from '@/constants/theme';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useMonthNavigation } from '@/hooks/useMonthNavigation';
 import { useTheme } from '@/hooks/use-theme';
+import { useTranslation, getDateLocale } from '@/locales/i18n';
+import { syncExpenses } from '@/services/syncService';
 import { useStore } from '@/store/useStore';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { formatSectionHeader } from '@/utils/dateHelpers';
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
+  const language = useStore((s) => s.settings.language);
+  const dateLocale = getDateLocale(language);
   const { year, month, goToPreviousMonth, goToNextMonth, isCurrentMonth } = useMonthNavigation();
   const { grouped, total, comparison, breakdown } = useExpenses(year, month);
   const currency = useStore((s) => s.settings.currency);
   const deleteExpense = useStore((s) => s.deleteExpense);
 
   const sections = grouped.map((group) => ({
-    title: formatSectionHeader(group.date),
+    title: formatSectionHeader(group.date, t('dates.today'), t('dates.yesterday'), dateLocale),
     dailyTotal: group.total,
     data: group.expenses,
   }));
@@ -32,12 +37,15 @@ export default function HomeScreen() {
   const topCategories = breakdown.slice(0, 4);
 
   const handleDeleteExpense = (id: string) => {
-    Alert.alert('Delete Expense', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('home.deleteTitle'), t('home.deleteMessage'), [
+      { text: t('home.cancel'), style: 'cancel' },
       {
-        text: 'Delete',
+        text: t('home.delete'),
         style: 'destructive',
-        onPress: () => deleteExpense(id),
+        onPress: () => {
+          deleteExpense(id);
+          syncExpenses();
+        },
       },
     ]);
   };
@@ -78,7 +86,7 @@ export default function HomeScreen() {
                       />
                       <View>
                         <Text style={[styles.pillLabel, { color: theme.text }]}>
-                          {info?.label}
+                          {t(`categories.${cat.key}`)}
                         </Text>
                         <Text style={[styles.pillAmount, { color: theme.textSecondary }]}>
                           {formatCurrency(cat.total, currency)}
@@ -112,9 +120,9 @@ export default function HomeScreen() {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Ionicons name="wallet-outline" size={48} color={theme.textSecondary} />
-            <Text style={[styles.emptyTitle, { color: theme.text }]}>No expenses yet</Text>
+            <Text style={[styles.emptyTitle, { color: theme.text }]}>{t('home.noExpenses')}</Text>
             <Text style={[styles.emptySubtitle, { color: theme.textSecondary }]}>
-              Track your first expense
+              {t('home.trackFirst')}
             </Text>
           </View>
         }

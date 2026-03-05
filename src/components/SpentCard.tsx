@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card } from '@/components/ui/Card';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useTranslation } from '@/locales/i18n';
 import { formatCurrency } from '@/utils/formatCurrency';
 
 interface SpentCardProps {
@@ -16,19 +17,20 @@ interface SpentCardProps {
 
 export function SpentCard({ total, currency, comparison }: SpentCardProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const comparisonText =
     comparison.direction === 'same'
       ? ''
       : comparison.direction === 'up'
-        ? `↑ ${comparison.percentage}% more than last month`
-        : `↓ ${comparison.percentage}% less than last month`;
+        ? t('spent.morePercent', { percentage: comparison.percentage })
+        : t('spent.lessPercent', { percentage: comparison.percentage });
 
   const comparisonColor = comparison.direction === 'up' ? '#FF6B6B' : '#4ECDC4';
 
   return (
     <Card style={styles.card}>
-      <Text style={[styles.label, { color: theme.textSecondary }]}>Spent this month</Text>
+      <Text style={[styles.label, { color: theme.textSecondary }]}>{t('spent.thisMonth')}</Text>
       <Text style={[styles.amount, { color: theme.text }]}>
         {formatCurrency(total, currency)}
       </Text>

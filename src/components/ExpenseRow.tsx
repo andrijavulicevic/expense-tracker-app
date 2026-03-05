@@ -5,6 +5,7 @@ import Animated, { SlideOutLeft } from 'react-native-reanimated';
 import { CATEGORY_MAP } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useTranslation } from '@/locales/i18n';
 import { Expense } from '@/types';
 import { formatCurrency } from '@/utils/formatCurrency';
 
@@ -17,7 +18,9 @@ interface ExpenseRowProps {
 
 export function ExpenseRow({ expense, currency, onPress, onDelete }: ExpenseRowProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const category = CATEGORY_MAP[expense.category];
+  const categoryLabel = t(`categories.${expense.category}`);
 
   return (
     <Animated.View exiting={SlideOutLeft.duration(200)}>
@@ -37,10 +40,10 @@ export function ExpenseRow({ expense, currency, onPress, onDelete }: ExpenseRowP
         </View>
         <View style={styles.details}>
           <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
-            {expense.title || category?.label}
+            {expense.title || categoryLabel}
           </Text>
           <Text style={[styles.category, { color: theme.textSecondary }]}>
-            {expense.title ? category?.label : ''}
+            {expense.title ? categoryLabel : ''}
           </Text>
         </View>
         <Text style={[styles.amount, { color: theme.text }]}>

@@ -11,15 +11,15 @@ import {
 } from '@/utils/calculations';
 
 export function useExpenses(year: number, month: number) {
-  const expenses = useStore((s) => s.expenses);
+  const allExpenses = useStore((s) => s.expenses);
 
   return useMemo(() => {
-    const monthExpenses = expensesForMonth(expenses, year, month);
+    const monthExpenses = expensesForMonth(allExpenses, year, month);
     const grouped = groupExpensesByDate(monthExpenses);
-    const total = totalForMonth(expenses, year, month);
+    const total = totalForMonth(allExpenses, year, month);
     const breakdown = categoryBreakdown(monthExpenses);
-    const comparison = monthOverMonthChange(expenses, year, month);
-    const average = dailyAverage(expenses, year, month);
+    const comparison = monthOverMonthChange(allExpenses, year, month);
+    const average = dailyAverage(allExpenses, year, month);
 
     return {
       monthExpenses,
@@ -29,5 +29,5 @@ export function useExpenses(year: number, month: number) {
       comparison,
       average,
     };
-  }, [expenses, year, month]);
+  }, [allExpenses, year, month]);
 }

@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Svg, { G, Path } from 'react-native-svg';
+import { StyleSheet, Text, View } from "react-native";
+import Svg, { G, Path } from "react-native-svg";
 
-import { CATEGORY_MAP } from '@/constants/categories';
-import { useTheme } from '@/hooks/use-theme';
-import { CategoryTotal } from '@/utils/calculations';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { CATEGORY_MAP } from "@/constants/categories";
+import { useTheme } from "@/hooks/use-theme";
+import { useTranslation } from "@/locales/i18n";
+import { CategoryTotal } from "@/utils/calculations";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface DonutChartProps {
   data: CategoryTotal[];
@@ -13,7 +14,13 @@ interface DonutChartProps {
   size?: number;
 }
 
-function describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number): string {
+function describeArc(
+  cx: number,
+  cy: number,
+  r: number,
+  startAngle: number,
+  endAngle: number,
+): string {
   // Clamp to avoid full-circle issues
   const sweep = Math.min(endAngle - startAngle, 359.999);
   const startRad = ((startAngle - 90) * Math.PI) / 180;
@@ -29,8 +36,14 @@ function describeArc(cx: number, cy: number, r: number, startAngle: number, endA
   return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
 }
 
-export function DonutChart({ data, total, currency, size = 200 }: DonutChartProps) {
+export function DonutChart({
+  data,
+  total,
+  currency,
+  size = 200,
+}: DonutChartProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const cx = size / 2;
   const cy = size / 2;
   const radius = (size - 40) / 2;
@@ -55,14 +68,20 @@ export function DonutChart({ data, total, currency, size = 200 }: DonutChartProp
               const angle = (item.percentage / 100) * 360;
               if (angle < 0.5) return null;
               const gap = data.length > 1 ? 3 : 0;
-              const path = describeArc(cx, cy, radius, currentAngle + gap / 2, currentAngle + angle - gap / 2);
+              const path = describeArc(
+                cx,
+                cy,
+                radius,
+                currentAngle + gap / 2,
+                currentAngle + angle - gap / 2,
+              );
               currentAngle += angle;
 
               return (
                 <Path
                   key={item.key}
                   d={path}
-                  stroke={CATEGORY_MAP[item.key]?.color ?? '#999'}
+                  stroke={CATEGORY_MAP[item.key]?.color ?? "#999"}
                   strokeWidth={strokeWidth}
                   fill="none"
                   strokeLinecap="round"
@@ -76,7 +95,9 @@ export function DonutChart({ data, total, currency, size = 200 }: DonutChartProp
         <Text style={[styles.centerAmount, { color: theme.text }]}>
           {formatCurrency(total, currency)}
         </Text>
-        <Text style={[styles.centerLabel, { color: theme.textSecondary }]}>Total</Text>
+        <Text style={[styles.centerLabel, { color: theme.textSecondary }]}>
+          {t('chart.total')}
+        </Text>
       </View>
     </View>
   );
@@ -84,21 +105,21 @@ export function DonutChart({ data, total, currency, size = 200 }: DonutChartProp
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   center: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...StyleSheet.absoluteFill,
+    alignItems: "center",
+    justifyContent: "center",
   },
   centerAmount: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   centerLabel: {
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
     marginTop: 2,
   },
 });

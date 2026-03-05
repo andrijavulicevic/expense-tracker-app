@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/Button';
 import { CURRENCIES } from '@/constants/currencies';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useTranslation } from '@/locales/i18n';
 import { useStore } from '@/store/useStore';
 
 export default function OnboardingScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const updateSettings = useStore((s) => s.updateSettings);
   const [selected, setSelected] = useState('RSD');
 
@@ -24,9 +26,9 @@ export default function OnboardingScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
         <Ionicons name="wallet-outline" size={64} color="#007AFF" />
-        <Text style={[styles.title, { color: theme.text }]}>Expense Tracker</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{t('onboarding.title')}</Text>
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-          Track your spending with ease.{'\n'}Pick your currency to get started.
+          {t('onboarding.subtitle')}
         </Text>
 
         <View style={styles.currencies}>
@@ -62,7 +64,7 @@ export default function OnboardingScreen() {
         </View>
       </View>
 
-      <Button title="Start Tracking" onPress={handleStart} style={styles.button} />
+      <Button title={t('onboarding.start')} onPress={handleStart} style={styles.button} />
     </SafeAreaView>
   );
 }

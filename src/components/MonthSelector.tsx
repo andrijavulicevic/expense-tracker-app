@@ -2,6 +2,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { getDateLocale } from '@/locales/i18n';
+import { useStore } from '@/store/useStore';
 import { getMonthYear } from '@/utils/dateHelpers';
 
 interface MonthSelectorProps {
@@ -14,13 +16,15 @@ interface MonthSelectorProps {
 
 export function MonthSelector({ year, month, onPrevious, onNext, isCurrentMonth }: MonthSelectorProps) {
   const theme = useTheme();
+  const language = useStore((s) => s.settings.language);
+  const dateLocale = getDateLocale(language);
 
   return (
     <View style={styles.container}>
       <Pressable onPress={onPrevious} style={styles.arrow}>
         <Text style={[styles.arrowText, { color: theme.text }]}>‹</Text>
       </Pressable>
-      <Text style={[styles.label, { color: theme.text }]}>{getMonthYear(year, month)}</Text>
+      <Text style={[styles.label, { color: theme.text }]}>{getMonthYear(year, month, dateLocale)}</Text>
       <Pressable
         onPress={onNext}
         disabled={isCurrentMonth}

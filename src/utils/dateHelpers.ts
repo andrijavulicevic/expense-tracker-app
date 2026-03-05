@@ -1,53 +1,44 @@
-const DAY_MS = 86400000;
+import dayjs from 'dayjs';
 
 export function toDateString(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return dayjs(date).format('YYYY-MM-DD');
 }
 
 export function todayString(): string {
-  return toDateString(new Date());
+  return dayjs().format('YYYY-MM-DD');
 }
 
 export function yesterdayString(): string {
-  return toDateString(new Date(Date.now() - DAY_MS));
+  return dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 }
 
-export function formatSectionHeader(dateStr: string): string {
-  const today = todayString();
-  const yesterday = yesterdayString();
-
-  if (dateStr === today) return 'Today';
-  if (dateStr === yesterday) return 'Yesterday';
+export function formatSectionHeader(dateStr: string, todayLabel: string, yesterdayLabel: string, locale: string): string {
+  if (dateStr === todayString()) return todayLabel;
+  if (dateStr === yesterdayString()) return yesterdayLabel;
 
   const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(locale, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
   });
 }
 
-export function getMonthYear(year: number, month: number): string {
+export function getMonthYear(year: number, month: number, locale: string): string {
   const date = new Date(year, month);
-  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 }
 
 export function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
+  return dayjs(new Date(year, month)).daysInMonth();
 }
 
 export function getDaysElapsedInMonth(year: number, month: number): number {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
+  const now = dayjs();
 
-  if (year === currentYear && month === currentMonth) {
-    return now.getDate();
+  if (year === now.year() && month === now.month()) {
+    return now.date();
   }
 
-  // Past month — all days elapsed
   return getDaysInMonth(year, month);
 }

@@ -1,20 +1,24 @@
 import { Expense, CategoryKey } from '@/types';
 import { getDaysElapsedInMonth } from './dateHelpers';
 
+function matchesMonth(dateStr: string, year: number, month: number): boolean {
+  // Parse year/month directly from the "YYYY-MM-DD" string.
+  // Avoids creating a Date object which causes timezone issues:
+  // Hermes (Android) parses date-only ISO strings as UTC, shifting
+  // dates backward in negative UTC offsets (e.g. March 1 → Feb 28).
+  const y = parseInt(dateStr.substring(0, 4), 10);
+  const m = parseInt(dateStr.substring(5, 7), 10) - 1; // 0-indexed to match JS months
+  return y === year && m === month;
+}
+
 export function totalForMonth(expenses: Expense[], year: number, month: number): number {
   return expenses
-    .filter((e) => {
-      const d = new Date(e.date + 'T00:00:00');
-      return d.getFullYear() === year && d.getMonth() === month;
-    })
+    .filter((e) => matchesMonth(e.date, year, month))
     .reduce((sum, e) => sum + e.amount, 0);
 }
 
 export function expensesForMonth(expenses: Expense[], year: number, month: number): Expense[] {
-  return expenses.filter((e) => {
-    const d = new Date(e.date + 'T00:00:00');
-    return d.getFullYear() === year && d.getMonth() === month;
-  });
+  return expenses.filter((e) => matchesMonth(e.date, year, month));
 }
 
 export interface CategoryTotal {
