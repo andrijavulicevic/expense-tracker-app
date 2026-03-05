@@ -8,6 +8,7 @@ export const CATEGORIES: Category[] = [
   { key: 'health', label: 'Health', icon: 'medkit-outline', color: '#E89B3C' },
   { key: 'fun', label: 'Fun', icon: 'game-controller-outline', color: '#9F5FC0' },
   { key: 'travel', label: 'Travel', icon: 'airplane-outline', color: '#D97706' },
+  { key: 'subscriptions', label: 'Subscriptions', icon: 'tv-outline', color: '#E44D8A' },
   { key: 'other', label: 'Other', icon: 'ellipsis-horizontal-circle-outline', color: '#718096' },
 ];
 

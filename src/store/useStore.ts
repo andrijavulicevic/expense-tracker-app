@@ -28,6 +28,7 @@ export const useStore = create<AppState>()(
       settings: {
         currency: 'RSD',
         language: 'auto',
+        theme: 'system',
         hasOnboarded: false,
         syncUrl: '',
       },
@@ -79,23 +80,27 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'expense-tracker-storage',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         expenses: state.expenses,
         pendingDeleteIds: state.pendingDeleteIds,
         settings: state.settings,
+        syncState: state.syncState,
       }),
       migrate: (persisted: any, version: number) => {
-        if (version === 0) {
-          const state = persisted as any;
+        const state = persisted as any;
+        if (version < 1) {
           state.expenses = (state.expenses || []).map((e: any) => ({
             ...e,
             updatedAt: e.updatedAt || e.createdAt,
           }));
           state.settings = { ...state.settings, syncUrl: state.settings?.syncUrl || '' };
         }
-        return persisted;
+        if (version < 2) {
+          state.settings = { ...state.settings, theme: state.settings?.theme || 'system' };
+        }
+        return state;
       },
     }
   )

@@ -66,6 +66,10 @@ export default {
     language: 'Language',
     currency: 'Currency',
     auto: 'Auto (device)',
+    theme: 'Theme',
+    themeSystem: 'System',
+    themeLight: 'Light',
+    themeDark: 'Dark',
     sync: 'Google Sheets Sync',
     syncUrlPlaceholder: 'Paste Google Apps Script URL',
     syncNow: 'Sync Now',
@@ -83,6 +87,7 @@ export default {
     health: 'Health',
     fun: 'Fun',
     travel: 'Travel',
+    subscriptions: 'Subscriptions',
     other: 'Other',
   },
 

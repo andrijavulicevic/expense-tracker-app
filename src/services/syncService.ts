@@ -16,10 +16,20 @@ export async function syncExpenses(): Promise<void> {
   setSyncState({ isSyncing: true, error: null });
 
   try {
+    // Only send expenses created or updated since last sync.
+    // This prevents re-sending items that were deleted from the Sheet.
+    const changedExpenses = syncState.lastSyncedAt
+      ? expenses.filter(
+          (e) =>
+            e.createdAt > syncState.lastSyncedAt! ||
+            e.updatedAt > syncState.lastSyncedAt!,
+        )
+      : expenses;
+
     const response = await fetch(settings.syncUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ expenses, deletedIds: pendingDeleteIds }),
+      body: JSON.stringify({ expenses: changedExpenses, deletedIds: pendingDeleteIds }),
     });
 
     if (!response.ok) throw new Error(`Sync failed: ${response.status}`);

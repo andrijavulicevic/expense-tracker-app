@@ -1,12 +1,12 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
 
+import { useResolvedColorScheme } from '@/hooks/use-theme';
 import { useStore } from '@/store/useStore';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useResolvedColorScheme();
   const hasOnboarded = useStore((s) => s.settings.hasOnboarded);
   const router = useRouter();
   const segments = useSegments();

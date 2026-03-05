@@ -22,8 +22,8 @@ import { Button } from "@/components/ui/Button";
 import { Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { getDateLocale, useTranslation } from "@/locales/i18n";
-import { useStore } from "@/store/useStore";
 import { syncExpenses } from "@/services/syncService";
+import { useStore } from "@/store/useStore";
 import { CategoryKey } from "@/types";
 import {
   toDateString,

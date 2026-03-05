@@ -16,6 +16,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/locales/i18n';
 import { syncExpenses } from '@/services/syncService';
 import { useStore } from '@/store/useStore';
+import { ThemePreference } from '@/types';
 
 const LANGUAGES = [
   { code: 'auto', label: (t: (k: string) => string) => t('settings.auto') },
@@ -23,11 +24,18 @@ const LANGUAGES = [
   { code: 'sr', label: () => 'Srpski' },
 ] as const;
 
+const THEMES: { code: ThemePreference; labelKey: string; icon: 'phone-portrait-outline' | 'sunny-outline' | 'moon-outline' }[] = [
+  { code: 'system', labelKey: 'settings.themeSystem', icon: 'phone-portrait-outline' },
+  { code: 'light', labelKey: 'settings.themeLight', icon: 'sunny-outline' },
+  { code: 'dark', labelKey: 'settings.themeDark', icon: 'moon-outline' },
+];
+
 export default function SettingsScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
   const currency = useStore((s) => s.settings.currency);
   const language = useStore((s) => s.settings.language);
+  const themeSetting = useStore((s) => s.settings.theme);
   const syncUrl = useStore((s) => s.settings.syncUrl);
   const { lastSyncedAt, isSyncing, error: syncError } = useStore((s) => s.syncState);
   const updateSettings = useStore((s) => s.updateSettings);
@@ -59,6 +67,31 @@ export default function SettingsScreen() {
               ]}>
               <Text style={[styles.rowLabel, { color: theme.text }]}>{lang.label(t)}</Text>
               {language === lang.code && (
+                <Ionicons name="checkmark" size={20} color="#007AFF" />
+              )}
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.sectionSpacer} />
+
+        <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t('settings.theme')}</Text>
+        <View style={[styles.section, { backgroundColor: theme.backgroundElement }]}>
+          {THEMES.map((themeOption, index) => (
+            <Pressable
+              key={themeOption.code}
+              onPress={() => updateSettings({ theme: themeOption.code })}
+              style={({ pressed }) => [
+                styles.row,
+                pressed && { backgroundColor: theme.backgroundSelected },
+                index < THEMES.length - 1 && {
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                  borderBottomColor: theme.backgroundSelected,
+                },
+              ]}>
+              <Ionicons name={themeOption.icon} size={20} color={theme.text} />
+              <Text style={[styles.rowLabel, { color: theme.text }]}>{t(themeOption.labelKey)}</Text>
+              {themeSetting === themeOption.code && (
                 <Ionicons name="checkmark" size={20} color="#007AFF" />
               )}
             </Pressable>

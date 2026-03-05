@@ -6,6 +6,7 @@ export type CategoryKey =
   | "health"
   | "fun"
   | "travel"
+  | "subscriptions"
   | "other";
 
 export interface Expense {
@@ -19,9 +20,12 @@ export interface Expense {
   updatedAt: string;
 }
 
+export type ThemePreference = 'system' | 'light' | 'dark';
+
 export interface Settings {
   currency: string;
   language: string;
+  theme: ThemePreference;
   hasOnboarded: boolean;
   syncUrl: string;
 }

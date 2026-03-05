@@ -66,6 +66,10 @@ export default {
     language: 'Jezik',
     currency: 'Valuta',
     auto: 'Automatski (uređaj)',
+    theme: 'Tema',
+    themeSystem: 'Sistemska',
+    themeLight: 'Svetla',
+    themeDark: 'Tamna',
     sync: 'Google Sheets sinhronizacija',
     syncUrlPlaceholder: 'Nalepite Google Apps Script URL',
     syncNow: 'Sinhronizuj',
@@ -83,6 +87,7 @@ export default {
     health: 'Zdravlje',
     fun: 'Zabava',
     travel: 'Putovanje',
+    subscriptions: 'Pretplate',
     other: 'Ostalo',
   },
 
