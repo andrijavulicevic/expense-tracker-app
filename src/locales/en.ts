@@ -9,7 +9,8 @@ export default {
   // Onboarding
   onboarding: {
     title: 'Expense Tracker',
-    subtitle: 'Track your spending with ease.\nPick your currency to get started.',
+    subtitle: 'Track your spending with ease.\nEnter your name and pick a currency to get started.',
+    namePlaceholder: 'Your name',
     start: 'Start Tracking',
   },
 
@@ -46,6 +47,7 @@ export default {
     notePlaceholder: 'Add a note...',
     yesterday: 'Yesterday',
     today: 'Today',
+    addedBy: 'Added by %{name}',
   },
 
   // Spent Card
@@ -63,6 +65,8 @@ export default {
   // Settings
   settings: {
     title: 'Settings',
+    name: 'Name',
+    namePlaceholder: 'Your name',
     language: 'Language',
     currency: 'Currency',
     auto: 'Auto (device)',
@@ -76,6 +80,22 @@ export default {
     syncing: 'Syncing...',
     lastSynced: 'Last synced: %{time}',
     syncError: 'Sync failed',
+    manageCategories: 'Manage Categories',
+  },
+
+  // Manage Categories
+  manageCategories: {
+    title: 'Manage Categories',
+    addNew: 'Add Category',
+    name: 'Category Name',
+    icon: 'Icon',
+    color: 'Color',
+    save: 'Save',
+    delete: 'Delete',
+    deleteTitle: 'Delete Category',
+    deleteMessage: 'Expenses using this category will show as unknown.',
+    cancel: 'Cancel',
+    duplicateKey: 'A category with this name already exists.',
   },
 
   // Categories

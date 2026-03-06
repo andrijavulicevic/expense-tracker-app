@@ -1,13 +1,4 @@
-export type CategoryKey =
-  | "food"
-  | "transport"
-  | "bills"
-  | "shopping"
-  | "health"
-  | "fun"
-  | "travel"
-  | "subscriptions"
-  | "other";
+export type CategoryKey = string;
 
 export interface Expense {
   id: string;
@@ -16,6 +7,7 @@ export interface Expense {
   category: CategoryKey;
   note?: string;
   date: string; // 'YYYY-MM-DD'
+  addedBy?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -26,6 +18,7 @@ export interface Settings {
   currency: string;
   language: string;
   theme: ThemePreference;
+  userName: string;
   hasOnboarded: boolean;
   syncUrl: string;
 }
@@ -37,8 +30,10 @@ export interface SyncState {
 }
 
 export interface Category {
-  key: CategoryKey;
+  key: string;
   label: string;
   icon: string;
   color: string;
 }
+
+export type CustomCategory = Category;

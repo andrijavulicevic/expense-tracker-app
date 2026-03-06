@@ -277,6 +277,15 @@ export default function AddExpenseScreen() {
           />
         )}
 
+        {isEditing && existingExpense?.addedBy ? (
+          <View style={styles.addedByRow}>
+            <Ionicons name="person-outline" size={14} color={theme.textSecondary} />
+            <Text style={[styles.addedByText, { color: theme.textSecondary }]}>
+              {t("expense.addedBy", { name: existingExpense.addedBy })}
+            </Text>
+          </View>
+        ) : null}
+
         <View style={styles.spacer} />
 
         <Button
@@ -380,5 +389,14 @@ const styles = StyleSheet.create({
     color: "#FF3B30",
     fontSize: 12,
     fontWeight: "600",
+  },
+  addedByRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: Spacing.one,
+  },
+  addedByText: {
+    fontSize: 13,
   },
 });

@@ -18,6 +18,7 @@ var COLUMNS = [
   "category",
   "note",
   "date",
+  "addedBy",
   "createdAt",
   "updatedAt",
 ];
@@ -52,9 +53,10 @@ function getOrCreateSheet() {
     sheet = ss.insertSheet(SHEET_NAME);
     sheet.appendRow(COLUMNS);
     sheet.getRange(1, 1, 1, COLUMNS.length).setFontWeight("bold");
-    // Force date/timestamp columns (date, createdAt, updatedAt = columns 6-8)
+    // Force date/timestamp columns (date=6, createdAt=8, updatedAt=9)
     // to plain text so Sheets never auto-converts them to Date objects.
-    sheet.getRange(1, 6, sheet.getMaxRows(), 3).setNumberFormat("@");
+    sheet.getRange(1, 6, sheet.getMaxRows(), 1).setNumberFormat("@");
+    sheet.getRange(1, 8, sheet.getMaxRows(), 2).setNumberFormat("@");
   }
   return sheet;
 }

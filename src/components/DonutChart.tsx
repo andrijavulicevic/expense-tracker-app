@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 
-import { CATEGORY_MAP } from "@/constants/categories";
+import { useCategories } from "@/hooks/useCategories";
 import { useTheme } from "@/hooks/use-theme";
 import { useTranslation } from "@/locales/i18n";
 import { CategoryTotal } from "@/utils/calculations";
@@ -44,6 +44,7 @@ export function DonutChart({
 }: DonutChartProps) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { getCategory } = useCategories();
   const cx = size / 2;
   const cy = size / 2;
   const radius = (size - 40) / 2;
@@ -81,7 +82,7 @@ export function DonutChart({
                 <Path
                   key={item.key}
                   d={path}
-                  stroke={CATEGORY_MAP[item.key]?.color ?? "#999"}
+                  stroke={getCategory(item.key).color}
                   strokeWidth={strokeWidth}
                   fill="none"
                   strokeLinecap="round"

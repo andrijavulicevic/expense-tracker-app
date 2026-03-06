@@ -9,7 +9,8 @@ export default {
   // Onboarding
   onboarding: {
     title: 'Praćenje troškova',
-    subtitle: 'Pratite svoje troškove sa lakoćom.\nIzaberite valutu za početak.',
+    subtitle: 'Pratite svoje troškove sa lakoćom.\nUnesite ime i izaberite valutu za početak.',
+    namePlaceholder: 'Vaše ime',
     start: 'Započni praćenje',
   },
 
@@ -46,6 +47,7 @@ export default {
     notePlaceholder: 'Dodajte belešku...',
     yesterday: 'Juče',
     today: 'Danas',
+    addedBy: 'Dodao/la %{name}',
   },
 
   // Spent Card
@@ -63,6 +65,8 @@ export default {
   // Settings
   settings: {
     title: 'Podešavanja',
+    name: 'Ime',
+    namePlaceholder: 'Vaše ime',
     language: 'Jezik',
     currency: 'Valuta',
     auto: 'Automatski (uređaj)',
@@ -76,6 +80,22 @@ export default {
     syncing: 'Sinhronizacija...',
     lastSynced: 'Poslednja sinhronizacija: %{time}',
     syncError: 'Sinhronizacija neuspešna',
+    manageCategories: 'Upravljanje kategorijama',
+  },
+
+  // Manage Categories
+  manageCategories: {
+    title: 'Upravljanje kategorijama',
+    addNew: 'Dodaj kategoriju',
+    name: 'Naziv kategorije',
+    icon: 'Ikona',
+    color: 'Boja',
+    save: 'Sačuvaj',
+    delete: 'Obriši',
+    deleteTitle: 'Obriši kategoriju',
+    deleteMessage: 'Troškovi sa ovom kategorijom će biti prikazani kao nepoznati.',
+    cancel: 'Otkaži',
+    duplicateKey: 'Kategorija sa ovim nazivom već postoji.',
   },
 
   // Categories

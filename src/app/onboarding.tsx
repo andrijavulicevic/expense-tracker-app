@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/Button';
@@ -16,9 +16,10 @@ export default function OnboardingScreen() {
   const { t } = useTranslation();
   const updateSettings = useStore((s) => s.updateSettings);
   const [selected, setSelected] = useState('RSD');
+  const [name, setName] = useState('');
 
   const handleStart = () => {
-    updateSettings({ currency: selected, hasOnboarded: true });
+    updateSettings({ currency: selected, userName: name.trim(), hasOnboarded: true });
     router.replace('/(tabs)');
   };
 
@@ -30,6 +31,22 @@ export default function OnboardingScreen() {
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
           {t('onboarding.subtitle')}
         </Text>
+
+        <TextInput
+          placeholder={t('onboarding.namePlaceholder')}
+          placeholderTextColor={theme.textSecondary}
+          value={name}
+          onChangeText={setName}
+          autoCapitalize="words"
+          style={[
+            styles.nameInput,
+            {
+              color: theme.text,
+              backgroundColor: theme.backgroundElement,
+              borderColor: theme.backgroundSelected,
+            },
+          ]}
+        />
 
         <View style={styles.currencies}>
           {CURRENCIES.map((c) => (
@@ -93,10 +110,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
+  nameInput: {
+    fontSize: 16,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    width: '100%',
+    textAlign: 'center',
+  },
   currencies: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: Spacing.four,
+    marginTop: Spacing.two,
   },
   currencyOption: {
     alignItems: 'center',

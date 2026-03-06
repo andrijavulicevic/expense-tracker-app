@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import {
   ActivityIndicator,
   Pressable,
@@ -33,6 +34,7 @@ const THEMES: { code: ThemePreference; labelKey: string; icon: 'phone-portrait-o
 export default function SettingsScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
+  const userName = useStore((s) => s.settings.userName);
   const currency = useStore((s) => s.settings.currency);
   const language = useStore((s) => s.settings.language);
   const themeSetting = useStore((s) => s.settings.theme);
@@ -51,6 +53,22 @@ export default function SettingsScreen() {
       </SafeAreaView>
 
       <ScrollView contentContainerStyle={styles.content}>
+        <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t('settings.name')}</Text>
+        <View style={[styles.section, { backgroundColor: theme.backgroundElement }]}>
+          <View style={styles.row}>
+            <Ionicons name="person-outline" size={20} color={theme.text} />
+            <TextInput
+              placeholder={t('settings.namePlaceholder')}
+              placeholderTextColor={theme.textSecondary}
+              value={userName}
+              onChangeText={(text) => updateSettings({ userName: text })}
+              style={[styles.syncInput, { color: theme.text }]}
+            />
+          </View>
+        </View>
+
+        <View style={styles.sectionSpacer} />
+
         <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t('settings.language')}</Text>
         <View style={[styles.section, { backgroundColor: theme.backgroundElement }]}>
           {LANGUAGES.map((lang, index) => (
@@ -121,6 +139,21 @@ export default function SettingsScreen() {
               )}
             </Pressable>
           ))}
+        </View>
+
+        <View style={styles.sectionSpacer} />
+
+        <View style={[styles.section, { backgroundColor: theme.backgroundElement }]}>
+          <Pressable
+            onPress={() => router.push('/manage-categories')}
+            style={({ pressed }) => [
+              styles.row,
+              pressed && { backgroundColor: theme.backgroundSelected },
+            ]}>
+            <Ionicons name="pricetag-outline" size={20} color={theme.text} />
+            <Text style={[styles.rowLabel, { color: theme.text }]}>{t('settings.manageCategories')}</Text>
+            <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
+          </Pressable>
         </View>
 
         <View style={styles.sectionSpacer} />

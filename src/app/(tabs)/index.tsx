@@ -7,11 +7,14 @@ import { ExpenseRow } from '@/components/ExpenseRow';
 import { MonthSelector } from '@/components/MonthSelector';
 import { SpentCard } from '@/components/SpentCard';
 import { FAB } from '@/components/ui/FAB';
-import { CATEGORY_MAP } from '@/constants/categories';
+import { DEFAULT_CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
+import { useCategories } from '@/hooks/useCategories';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useMonthNavigation } from '@/hooks/useMonthNavigation';
 import { useTheme } from '@/hooks/use-theme';
+
+const DEFAULT_KEYS = new Set(DEFAULT_CATEGORIES.map((c) => c.key));
 import { useTranslation, getDateLocale } from '@/locales/i18n';
 import { syncExpenses } from '@/services/syncService';
 import { useStore } from '@/store/useStore';
@@ -21,6 +24,7 @@ import { formatSectionHeader } from '@/utils/dateHelpers';
 export default function HomeScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { getCategory } = useCategories();
   const language = useStore((s) => s.settings.language);
   const dateLocale = getDateLocale(language);
   const { year, month, goToPreviousMonth, goToNextMonth, isCurrentMonth } = useMonthNavigation();
@@ -74,19 +78,19 @@ export default function HomeScreen() {
             {topCategories.length > 0 && (
               <View style={styles.categoryPills}>
                 {topCategories.map((cat) => {
-                  const info = CATEGORY_MAP[cat.key];
+                  const info = getCategory(cat.key);
                   return (
                     <View
                       key={cat.key}
-                      style={[styles.pill, { backgroundColor: (info?.color ?? '#999') + '15' }]}>
+                      style={[styles.pill, { backgroundColor: info.color + '15' }]}>
                       <Ionicons
-                        name={info?.icon as keyof typeof Ionicons.glyphMap}
+                        name={info.icon as keyof typeof Ionicons.glyphMap}
                         size={18}
-                        color={info?.color}
+                        color={info.color}
                       />
                       <View>
                         <Text style={[styles.pillLabel, { color: theme.text }]}>
-                          {t(`categories.${cat.key}`)}
+                          {DEFAULT_KEYS.has(cat.key) ? t(`categories.${cat.key}`) : info.label}
                         </Text>
                         <Text style={[styles.pillAmount, { color: theme.textSecondary }]}>
                           {formatCurrency(cat.total, currency)}

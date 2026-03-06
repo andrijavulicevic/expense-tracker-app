@@ -7,11 +7,14 @@ import { DonutChart } from '@/components/DonutChart';
 import { ExpenseRow } from '@/components/ExpenseRow';
 import { MonthSelector } from '@/components/MonthSelector';
 import { Card } from '@/components/ui/Card';
-import { CATEGORY_MAP } from '@/constants/categories';
+import { DEFAULT_CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
+import { useCategories } from '@/hooks/useCategories';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useMonthNavigation } from '@/hooks/useMonthNavigation';
 import { useTheme } from '@/hooks/use-theme';
+
+const DEFAULT_KEYS = new Set(DEFAULT_CATEGORIES.map((c) => c.key));
 import { useTranslation } from '@/locales/i18n';
 import { useStore } from '@/store/useStore';
 import { CategoryKey } from '@/types';
@@ -20,6 +23,7 @@ import { formatCurrency } from '@/utils/formatCurrency';
 export default function StatsScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { getCategory } = useCategories();
   const { year, month, goToPreviousMonth, goToNextMonth, isCurrentMonth } = useMonthNavigation();
   const { monthExpenses, total, breakdown, average } = useExpenses(year, month);
   const currency = useStore((s) => s.settings.currency);
@@ -60,7 +64,8 @@ export default function StatsScreen() {
 
           <View style={styles.breakdownList}>
             {breakdown.map((item) => {
-              const info = CATEGORY_MAP[item.key];
+              const info = getCategory(item.key);
+              const label = DEFAULT_KEYS.has(item.key) ? t(`categories.${item.key}`) : info.label;
               return (
                 <Pressable
                   key={item.key}
@@ -69,14 +74,14 @@ export default function StatsScreen() {
                     styles.breakdownRow,
                     pressed && { backgroundColor: theme.backgroundElement },
                   ]}>
-                  <View style={[styles.dot, { backgroundColor: info?.color }]} />
+                  <View style={[styles.dot, { backgroundColor: info.color }]} />
                   <Text style={[styles.breakdownLabel, { color: theme.text }]}>
                     <Ionicons
-                      name={info?.icon as keyof typeof Ionicons.glyphMap}
+                      name={info.icon as keyof typeof Ionicons.glyphMap}
                       size={16}
-                      color={info?.color}
+                      color={info.color}
                     />{' '}
-                    {t(`categories.${item.key}`)}
+                    {label}
                   </Text>
                   <Text style={[styles.breakdownAmount, { color: theme.text }]}>
                     {formatCurrency(item.total, currency)}
@@ -87,7 +92,7 @@ export default function StatsScreen() {
                         styles.bar,
                         {
                           width: `${item.percentage}%`,
-                          backgroundColor: info?.color,
+                          backgroundColor: info.color,
                         },
                       ]}
                     />
@@ -116,7 +121,7 @@ export default function StatsScreen() {
         <SafeAreaView style={[styles.sheetContainer, { backgroundColor: theme.background }]} edges={['top']}>
           <View style={styles.sheetHeader}>
             <Text style={[styles.sheetTitle, { color: theme.text }]}>
-              {selectedCategory ? t('stats.categoryExpenses', { category: t(`categories.${selectedCategory}`) }) : ''}
+              {selectedCategory ? t('stats.categoryExpenses', { category: DEFAULT_KEYS.has(selectedCategory) ? t(`categories.${selectedCategory}`) : getCategory(selectedCategory).label }) : ''}
             </Text>
             <Pressable onPress={handleCloseSheet}>
               <Text style={[styles.sheetClose, { color: '#007AFF' }]}>{t('stats.done')}</Text>

@@ -4,10 +4,12 @@ export async function syncExpenses(): Promise<void> {
   const {
     expenses,
     pendingDeleteIds,
+    customCategories,
     settings,
     syncState,
     setSyncState,
     replaceExpenses,
+    replaceCustomCategories,
     clearPendingDeleteIds,
   } = useStore.getState();
 
@@ -29,7 +31,7 @@ export async function syncExpenses(): Promise<void> {
     const response = await fetch(settings.syncUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ expenses: changedExpenses, deletedIds: pendingDeleteIds }),
+      body: JSON.stringify({ expenses: changedExpenses, deletedIds: pendingDeleteIds, customCategories }),
     });
 
     if (!response.ok) throw new Error(`Sync failed: ${response.status}`);
@@ -40,6 +42,9 @@ export async function syncExpenses(): Promise<void> {
       throw new Error("Invalid sync response");
 
     replaceExpenses(data.expenses);
+    if (Array.isArray(data.customCategories)) {
+      replaceCustomCategories(data.customCategories);
+    }
     clearPendingDeleteIds();
     setSyncState({
       lastSyncedAt: new Date().toISOString(),

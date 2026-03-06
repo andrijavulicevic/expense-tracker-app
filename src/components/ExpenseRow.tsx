@@ -2,12 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { SlideOutLeft } from 'react-native-reanimated';
 
-import { CATEGORY_MAP } from '@/constants/categories';
+import { DEFAULT_CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
+import { useCategories } from '@/hooks/useCategories';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/locales/i18n';
 import { Expense } from '@/types';
 import { formatCurrency } from '@/utils/formatCurrency';
+
+const DEFAULT_KEYS = new Set(DEFAULT_CATEGORIES.map((c) => c.key));
 
 interface ExpenseRowProps {
   expense: Expense;
@@ -19,8 +22,11 @@ interface ExpenseRowProps {
 export function ExpenseRow({ expense, currency, onPress, onDelete }: ExpenseRowProps) {
   const theme = useTheme();
   const { t } = useTranslation();
-  const category = CATEGORY_MAP[expense.category];
-  const categoryLabel = t(`categories.${expense.category}`);
+  const { getCategory } = useCategories();
+  const category = getCategory(expense.category);
+  const categoryLabel = DEFAULT_KEYS.has(expense.category)
+    ? t(`categories.${expense.category}`)
+    : category.label;
 
   return (
     <Animated.View exiting={SlideOutLeft.duration(200)}>

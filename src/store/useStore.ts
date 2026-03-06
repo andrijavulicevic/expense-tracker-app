@@ -3,17 +3,22 @@ import * as Crypto from 'expo-crypto';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { Expense, Settings, SyncState } from '@/types';
+import { CustomCategory, Expense, Settings, SyncState } from '@/types';
 
 interface AppState {
   expenses: Expense[];
   pendingDeleteIds: string[];
+  customCategories: CustomCategory[];
   settings: Settings;
   syncState: SyncState;
 
-  addExpense: (e: Omit<Expense, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  addExpense: (e: Omit<Expense, 'id' | 'addedBy' | 'createdAt' | 'updatedAt'>) => void;
   updateExpense: (id: string, updates: Partial<Omit<Expense, 'id' | 'createdAt' | 'updatedAt'>>) => void;
   deleteExpense: (id: string) => void;
+  addCustomCategory: (cat: CustomCategory) => void;
+  updateCustomCategory: (key: string, updates: Partial<Omit<CustomCategory, 'key'>>) => void;
+  deleteCustomCategory: (key: string) => void;
+  replaceCustomCategories: (cats: CustomCategory[]) => void;
   updateSettings: (s: Partial<Settings>) => void;
   setSyncState: (s: Partial<SyncState>) => void;
   replaceExpenses: (expenses: Expense[]) => void;
@@ -25,10 +30,12 @@ export const useStore = create<AppState>()(
     (set) => ({
       expenses: [],
       pendingDeleteIds: [],
+      customCategories: [],
       settings: {
         currency: 'RSD',
         language: 'auto',
         theme: 'system',
+        userName: '',
         hasOnboarded: false,
         syncUrl: '',
       },
@@ -45,6 +52,7 @@ export const useStore = create<AppState>()(
             {
               ...data,
               id: Crypto.randomUUID(),
+              addedBy: state.settings.userName || undefined,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             },
@@ -74,17 +82,37 @@ export const useStore = create<AppState>()(
           syncState: { ...state.syncState, ...updates },
         })),
 
+      addCustomCategory: (cat) =>
+        set((state) => ({
+          customCategories: [...state.customCategories, cat],
+        })),
+
+      updateCustomCategory: (key, updates) =>
+        set((state) => ({
+          customCategories: state.customCategories.map((c) =>
+            c.key === key ? { ...c, ...updates } : c
+          ),
+        })),
+
+      deleteCustomCategory: (key) =>
+        set((state) => ({
+          customCategories: state.customCategories.filter((c) => c.key !== key),
+        })),
+
+      replaceCustomCategories: (cats) => set({ customCategories: cats }),
+
       replaceExpenses: (expenses) => set({ expenses }),
 
       clearPendingDeleteIds: () => set({ pendingDeleteIds: [] }),
     }),
     {
       name: 'expense-tracker-storage',
-      version: 2,
+      version: 4,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         expenses: state.expenses,
         pendingDeleteIds: state.pendingDeleteIds,
+        customCategories: state.customCategories,
         settings: state.settings,
         syncState: state.syncState,
       }),
@@ -99,6 +127,12 @@ export const useStore = create<AppState>()(
         }
         if (version < 2) {
           state.settings = { ...state.settings, theme: state.settings?.theme || 'system' };
+        }
+        if (version < 3) {
+          state.customCategories = state.customCategories || [];
+        }
+        if (version < 4) {
+          state.settings = { ...state.settings, userName: state.settings?.userName || '' };
         }
         return state;
       },
