@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -52,7 +54,8 @@ export default function SettingsScreen() {
         <Text style={[styles.screenTitle, { color: theme.text }]}>{t('settings.title')}</Text>
       </SafeAreaView>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t('settings.name')}</Text>
         <View style={[styles.section, { backgroundColor: theme.backgroundElement }]}>
           <View style={styles.row}>
@@ -204,12 +207,16 @@ export default function SettingsScreen() {
           </Text>
         ) : null}
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  flex: {
     flex: 1,
   },
   screenTitle: {

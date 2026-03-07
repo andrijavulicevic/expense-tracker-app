@@ -69,7 +69,17 @@ function readExpenses(sheet) {
     var obj = {};
     headers.forEach(function (h, i) {
       if (row[i] === "" || row[i] === null || row[i] === undefined) return;
-      obj[h] = row[i];
+      var val = row[i];
+      // Sheets may return Date objects for date-looking cells — convert to string
+      if (val instanceof Date) {
+        if (h === "date") {
+          val = Utilities.formatDate(val, Session.getScriptTimeZone(), "yyyy-MM-dd");
+        } else {
+          val = val.toISOString();
+        }
+      }
+      if (typeof val === "string") val = val.replace(/^'/, "");
+      obj[h] = val;
     });
     if (obj.amount !== undefined) obj.amount = Number(obj.amount);
     return obj;
