@@ -13,10 +13,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import dayjs from 'dayjs';
+
 import { CURRENCIES } from '@/constants/currencies';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { useTranslation } from '@/locales/i18n';
+import { getDateLocale, useTranslation } from '@/locales/i18n';
+import { toDayjsLocale } from '@/utils/dateHelpers';
 import { syncExpenses } from '@/services/syncService';
 import { useStore } from '@/store/useStore';
 import { ThemePreference } from '@/types';
@@ -197,7 +200,7 @@ export default function SettingsScreen() {
 
         {lastSyncedAt ? (
           <Text style={[styles.syncStatus, { color: theme.textSecondary }]}>
-            {t('settings.lastSynced', { time: new Date(lastSyncedAt).toLocaleString() })}
+            {t('settings.lastSynced', { time: dayjs(lastSyncedAt).locale(toDayjsLocale(getDateLocale(language))).format('MMM D, YYYY HH:mm') })}
           </Text>
         ) : null}
 

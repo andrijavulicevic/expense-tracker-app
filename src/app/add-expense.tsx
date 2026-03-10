@@ -16,6 +16,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import dayjs from "dayjs";
+
 import { CategoryPicker } from "@/components/CategoryPicker";
 import { NumberPad } from "@/components/NumberPad";
 import { Button } from "@/components/ui/Button";
@@ -26,6 +28,7 @@ import { syncExpenses } from "@/services/syncService";
 import { useStore } from "@/store/useStore";
 import { CategoryKey } from "@/types";
 import {
+  formatShortDate,
   toDateString,
   todayString,
   yesterdayString,
@@ -250,10 +253,7 @@ export default function AddExpenseScreen() {
               />
               {isCustomDate && (
                 <Text style={[styles.dateChipText, { color: "#FFFFFF" }]}>
-                  {new Date(date + "T00:00:00").toLocaleDateString(dateLocale, {
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {formatShortDate(date, dateLocale)}
                 </Text>
               )}
             </View>
@@ -270,9 +270,9 @@ export default function AddExpenseScreen() {
 
         {showPicker && (
           <DateTimePicker
-            value={new Date(date + "T00:00:00")}
+            value={dayjs(date).toDate()}
             mode="date"
-            maximumDate={new Date()}
+            maximumDate={dayjs().toDate()}
             onChange={handleDatePick}
           />
         )}

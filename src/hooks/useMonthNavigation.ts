@@ -1,9 +1,10 @@
+import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 
 export function useMonthNavigation() {
-  const now = new Date();
-  const [year, setYear] = useState(now.getFullYear());
-  const [month, setMonth] = useState(now.getMonth());
+  const now = dayjs();
+  const [year, setYear] = useState(now.year());
+  const [month, setMonth] = useState(now.month());
 
   const goToPreviousMonth = useCallback(() => {
     setMonth((prev) => {
@@ -16,8 +17,9 @@ export function useMonthNavigation() {
   }, []);
 
   const goToNextMonth = useCallback(() => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
+    const current = dayjs();
+    const currentYear = current.year();
+    const currentMonth = current.month();
 
     setMonth((prev) => {
       const nextMonth = prev === 11 ? 0 : prev + 1;
@@ -36,7 +38,7 @@ export function useMonthNavigation() {
     });
   }, [year]);
 
-  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+  const isCurrentMonth = year === now.year() && month === now.month();
 
   return {
     year,

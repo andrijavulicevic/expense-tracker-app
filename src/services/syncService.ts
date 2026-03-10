@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 import { useStore } from "@/store/useStore";
 
 export async function syncExpenses(): Promise<void> {
@@ -53,7 +55,7 @@ export async function syncExpenses(): Promise<void> {
     }
     clearPendingDeleteIds();
     setSyncState({
-      lastSyncedAt: new Date().toISOString(),
+      lastSyncedAt: dayjs().toISOString(),
       isSyncing: false,
       error: null,
     });

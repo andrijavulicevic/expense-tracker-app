@@ -1,4 +1,9 @@
 import dayjs from 'dayjs';
+import 'dayjs/locale/sr';
+
+export function toDayjsLocale(locale: string): string {
+  return locale === 'sr-Latn' ? 'sr' : 'en';
+}
 
 export function toDateString(date: Date): string {
   return dayjs(date).format('YYYY-MM-DD');
@@ -16,21 +21,19 @@ export function formatSectionHeader(dateStr: string, todayLabel: string, yesterd
   if (dateStr === todayString()) return todayLabel;
   if (dateStr === yesterdayString()) return yesterdayLabel;
 
-  const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString(locale, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
+  return dayjs(dateStr).locale(toDayjsLocale(locale)).format('ddd, MMM D');
+}
+
+export function formatShortDate(dateStr: string, locale: string): string {
+  return dayjs(dateStr).locale(toDayjsLocale(locale)).format('MMM D');
 }
 
 export function getMonthYear(year: number, month: number, locale: string): string {
-  const date = new Date(year, month);
-  return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+  return dayjs().year(year).month(month).locale(toDayjsLocale(locale)).format('MMMM YYYY');
 }
 
 export function getDaysInMonth(year: number, month: number): number {
-  return dayjs(new Date(year, month)).daysInMonth();
+  return dayjs().year(year).month(month).daysInMonth();
 }
 
 export function getDaysElapsedInMonth(year: number, month: number): number {

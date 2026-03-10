@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import dayjs from 'dayjs';
 import * as Crypto from 'expo-crypto';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -53,8 +54,8 @@ export const useStore = create<AppState>()(
               ...data,
               id: Crypto.randomUUID(),
               addedBy: state.settings.userName || undefined,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
+              createdAt: dayjs().toISOString(),
+              updatedAt: dayjs().toISOString(),
             },
           ],
         })),
@@ -62,7 +63,7 @@ export const useStore = create<AppState>()(
       updateExpense: (id, updates) =>
         set((state) => ({
           expenses: state.expenses.map((e) =>
-            e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e
+            e.id === id ? { ...e, ...updates, updatedAt: dayjs().toISOString() } : e
           ),
         })),
 
