@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react';
+import { ReactNode } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -7,7 +7,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { runOnJS } from 'react-native-worklets';
 
 interface SwipeableMonthViewProps {
   onSwipeLeft?: () => void;
@@ -18,21 +17,15 @@ interface SwipeableMonthViewProps {
 
 const SWIPE_THRESHOLD = 50;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const TIMING_CONFIG = { duration: 200, easing: Easing.out(Easing.cubic) };
+const SLIDE_DURATION = 200;
+const TIMING_CONFIG = { duration: SLIDE_DURATION, easing: Easing.out(Easing.cubic) };
 
 export function SwipeableMonthView({ onSwipeLeft, onSwipeRight, disableSwipeLeft, children }: SwipeableMonthViewProps) {
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
 
-  // Runs on JS thread: change month, then fade in on next frame
-  const changeMonthAndFadeIn = useCallback((cb: () => void) => {
-    cb();
-    requestAnimationFrame(() => {
-      opacity.value = withTiming(1, { duration: 150 });
-    });
-  }, [opacity]);
-
   const pan = Gesture.Pan()
+    .runOnJS(true)
     .activeOffsetX([-20, 20])
     .failOffsetY([-10, 10])
     .onUpdate((e) => {
@@ -45,15 +38,18 @@ export function SwipeableMonthView({ onSwipeLeft, onSwipeRight, disableSwipeLeft
 
       if (swipedRight || swipedLeft) {
         const direction = e.translationX > 0 ? 1 : -1;
-        // Slide out and fade to 0
+        // Slide out and fade
         translateX.value = withTiming(direction * SCREEN_WIDTH * 0.4, TIMING_CONFIG);
-        opacity.value = withTiming(0, TIMING_CONFIG, () => {
-          // Snap position back while invisible
+        opacity.value = withTiming(0, TIMING_CONFIG);
+        // After animation completes, reset position and change month
+        setTimeout(() => {
           translateX.value = 0;
-          // Change month on JS thread, then fade in
           const cb = swipedRight ? onSwipeRight! : onSwipeLeft!;
-          runOnJS(changeMonthAndFadeIn)(cb);
-        });
+          cb();
+          requestAnimationFrame(() => {
+            opacity.value = withTiming(1, { duration: 150 });
+          });
+        }, SLIDE_DURATION);
       } else {
         translateX.value = withTiming(0, TIMING_CONFIG);
         opacity.value = withTiming(1, TIMING_CONFIG);
