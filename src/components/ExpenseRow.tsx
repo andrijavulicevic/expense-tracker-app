@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { SlideOutLeft } from 'react-native-reanimated';
 
 import { DEFAULT_CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
@@ -29,34 +28,32 @@ export function ExpenseRow({ expense, currency, onPress, onDelete }: ExpenseRowP
     : category.label;
 
   return (
-    <Animated.View exiting={SlideOutLeft.duration(200)}>
-      <Pressable
-        onPress={onPress}
-        onLongPress={onDelete}
-        style={({ pressed }) => [
-          styles.container,
-          { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
-        ]}>
-        <View style={[styles.iconContainer, { backgroundColor: category?.color + '20' }]}>
-          <Ionicons
-            name={category?.icon as keyof typeof Ionicons.glyphMap}
-            size={20}
-            color={category?.color}
-          />
-        </View>
-        <View style={styles.details}>
-          <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
-            {expense.title || categoryLabel}
-          </Text>
-          <Text style={[styles.category, { color: theme.textSecondary }]}>
-            {expense.title ? categoryLabel : ''}
-          </Text>
-        </View>
-        <Text style={[styles.amount, { color: theme.text }]}>
-          -{formatCurrency(expense.amount, currency)}
+    <Pressable
+      onPress={onPress}
+      onLongPress={onDelete}
+      style={({ pressed }) => [
+        styles.container,
+        { backgroundColor: pressed ? theme.backgroundSelected : 'transparent' },
+      ]}>
+      <View style={[styles.iconContainer, { backgroundColor: category?.color + '20' }]}>
+        <Ionicons
+          name={category?.icon as keyof typeof Ionicons.glyphMap}
+          size={20}
+          color={category?.color}
+        />
+      </View>
+      <View style={styles.details}>
+        <Text style={[styles.name, { color: theme.text }]} numberOfLines={1}>
+          {expense.title || categoryLabel}
         </Text>
-      </Pressable>
-    </Animated.View>
+        <Text style={[styles.category, { color: theme.textSecondary }]}>
+          {expense.title ? categoryLabel : ''}
+        </Text>
+      </View>
+      <Text style={[styles.amount, { color: theme.text }]}>
+        -{formatCurrency(expense.amount, currency)}
+      </Text>
+    </Pressable>
   );
 }
 

@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ExpenseRow } from '@/components/ExpenseRow';
 import { MonthSelector } from '@/components/MonthSelector';
 import { SpentCard } from '@/components/SpentCard';
+import { SwipeableMonthView } from '@/components/SwipeableMonthView';
 import { FAB } from '@/components/ui/FAB';
 import { DEFAULT_CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
@@ -55,6 +56,7 @@ export default function HomeScreen() {
   };
 
   return (
+    <SwipeableMonthView onSwipeLeft={goToNextMonth} onSwipeRight={goToPreviousMonth} disableSwipeLeft={isCurrentMonth}>
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <MonthSelector
@@ -134,6 +136,7 @@ export default function HomeScreen() {
 
       <FAB onPress={() => router.push('/add-expense')} />
     </View>
+    </SwipeableMonthView>
   );
 }
 

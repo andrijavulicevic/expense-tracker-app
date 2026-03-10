@@ -1,6 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useResolvedColorScheme } from '@/hooks/use-theme';
 import { useStore } from '@/store/useStore';
@@ -26,6 +27,7 @@ export default function RootLayout() {
   }, [hasOnboarded, segments, router]);
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding" />
@@ -46,5 +48,6 @@ export default function RootLayout() {
         />
       </Stack>
     </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

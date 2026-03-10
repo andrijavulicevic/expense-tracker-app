@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DonutChart } from '@/components/DonutChart';
 import { ExpenseRow } from '@/components/ExpenseRow';
 import { MonthSelector } from '@/components/MonthSelector';
+import { SwipeableMonthView } from '@/components/SwipeableMonthView';
 import { Card } from '@/components/ui/Card';
 import { DEFAULT_CATEGORIES } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
@@ -36,6 +37,7 @@ export default function StatsScreen() {
   const handleCloseSheet = useCallback(() => setSelectedCategory(null), []);
 
   return (
+    <SwipeableMonthView onSwipeLeft={goToNextMonth} onSwipeRight={goToPreviousMonth} disableSwipeLeft={isCurrentMonth}>
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <SafeAreaView edges={['top']}>
         <MonthSelector
@@ -147,6 +149,7 @@ export default function StatsScreen() {
         </SafeAreaView>
       </Modal>
     </View>
+    </SwipeableMonthView>
   );
 }
 
