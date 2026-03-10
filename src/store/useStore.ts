@@ -114,7 +114,7 @@ export const useStore = create<AppState>()(
         pendingDeleteIds: state.pendingDeleteIds,
         customCategories: state.customCategories,
         settings: state.settings,
-        syncState: state.syncState,
+        syncState: { ...state.syncState, isSyncing: false },
       }),
       migrate: (persisted: any, version: number) => {
         const state = persisted as any;
