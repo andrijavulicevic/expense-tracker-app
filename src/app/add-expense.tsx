@@ -7,8 +7,10 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   Alert,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -157,151 +159,161 @@ export default function AddExpenseScreen() {
         </Text>
       </View>
 
-      <View style={styles.body}>
-        <NumberPad onInput={handleInput} onDelete={handleDelete} />
+      <KeyboardAvoidingView
+        style={styles.body}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <NumberPad onInput={handleInput} onDelete={handleDelete} />
 
-        <CategoryPicker selected={category} onSelect={setCategory} />
+          <CategoryPicker selected={category} onSelect={setCategory} />
 
-        <TextInput
-          placeholder={t("expense.titlePlaceholder")}
-          placeholderTextColor={theme.textSecondary}
-          value={title}
-          onChangeText={setTitle}
-          style={[
-            styles.titleInput,
-            {
-              color: theme.text,
-              backgroundColor: theme.backgroundElement,
-            },
-          ]}
-        />
-
-        <TextInput
-          placeholder={t("expense.notePlaceholder")}
-          placeholderTextColor={theme.textSecondary}
-          value={note}
-          onChangeText={setNote}
-          multiline
-          numberOfLines={3}
-          textAlignVertical="top"
-          style={[
-            styles.noteInput,
-            {
-              color: theme.text,
-              backgroundColor: theme.backgroundElement,
-            },
-          ]}
-        />
-
-        <View style={styles.dateRow}>
-          <Pressable
-            onPress={() => setDate(yesterdayString())}
+          <TextInput
+            placeholder={t("expense.titlePlaceholder")}
+            placeholderTextColor={theme.textSecondary}
+            value={title}
+            onChangeText={setTitle}
             style={[
-              styles.dateChip,
+              styles.titleInput,
               {
-                backgroundColor:
-                  date === yesterdayString()
-                    ? "#007AFF"
-                    : theme.backgroundElement,
+                color: theme.text,
+                backgroundColor: theme.backgroundElement,
               },
             ]}
-          >
-            <Text
+          />
+
+          <TextInput
+            placeholder={t("expense.notePlaceholder")}
+            placeholderTextColor={theme.textSecondary}
+            value={note}
+            onChangeText={setNote}
+            multiline
+            numberOfLines={3}
+            textAlignVertical="top"
+            style={[
+              styles.noteInput,
+              {
+                color: theme.text,
+                backgroundColor: theme.backgroundElement,
+              },
+            ]}
+          />
+
+          <View style={styles.dateRow}>
+            <Pressable
+              onPress={() => setDate(yesterdayString())}
               style={[
-                styles.dateChipText,
-                { color: date === yesterdayString() ? "#FFFFFF" : theme.text },
+                styles.dateChip,
+                {
+                  backgroundColor:
+                    date === yesterdayString()
+                      ? "#007AFF"
+                      : theme.backgroundElement,
+                },
               ]}
             >
-              {t("expense.yesterday")}
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => setDate(todayString())}
-            style={[
-              styles.dateChip,
-              {
-                backgroundColor:
-                  date === todayString() ? "#007AFF" : theme.backgroundElement,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.dateChipText,
-                { color: date === todayString() ? "#FFFFFF" : theme.text },
-              ]}
-            >
-              {t("expense.today")}
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => setShowPicker(true)}
-            style={[
-              styles.dateChip,
-              {
-                backgroundColor: isCustomDate
-                  ? "#007AFF"
-                  : theme.backgroundElement,
-              },
-            ]}
-          >
-            <View style={styles.dateChipContent}>
-              <Ionicons
-                name="calendar-outline"
-                size={16}
-                color={isCustomDate ? "#FFFFFF" : theme.text}
-              />
-              {isCustomDate && (
-                <Text style={[styles.dateChipText, { color: "#FFFFFF" }]}>
-                  {formatShortDate(date, dateLocale)}
-                </Text>
-              )}
-            </View>
-          </Pressable>
-          {isCustomDate && (
+              <Text
+                style={[
+                  styles.dateChipText,
+                  { color: date === yesterdayString() ? "#FFFFFF" : theme.text },
+                ]}
+              >
+                {t("expense.yesterday")}
+              </Text>
+            </Pressable>
             <Pressable
               onPress={() => setDate(todayString())}
-              style={[styles.clearButton]}
+              style={[
+                styles.dateChip,
+                {
+                  backgroundColor:
+                    date === todayString() ? "#007AFF" : theme.backgroundElement,
+                },
+              ]}
             >
-              <Ionicons name="close" size={14} color="#FF3B30" />
+              <Text
+                style={[
+                  styles.dateChipText,
+                  { color: date === todayString() ? "#FFFFFF" : theme.text },
+                ]}
+              >
+                {t("expense.today")}
+              </Text>
             </Pressable>
+            <Pressable
+              onPress={() => setShowPicker(true)}
+              style={[
+                styles.dateChip,
+                {
+                  backgroundColor: isCustomDate
+                    ? "#007AFF"
+                    : theme.backgroundElement,
+                },
+              ]}
+            >
+              <View style={styles.dateChipContent}>
+                <Ionicons
+                  name="calendar-outline"
+                  size={16}
+                  color={isCustomDate ? "#FFFFFF" : theme.text}
+                />
+                {isCustomDate && (
+                  <Text style={[styles.dateChipText, { color: "#FFFFFF" }]}>
+                    {formatShortDate(date, dateLocale)}
+                  </Text>
+                )}
+              </View>
+            </Pressable>
+            {isCustomDate && (
+              <Pressable
+                onPress={() => setDate(todayString())}
+                style={[styles.clearButton]}
+              >
+                <Ionicons name="close" size={14} color="#FF3B30" />
+              </Pressable>
+            )}
+          </View>
+
+          {showPicker && (
+            <DateTimePicker
+              value={dayjs(date).toDate()}
+              mode="date"
+              maximumDate={dayjs().toDate()}
+              onChange={handleDatePick}
+            />
+          )}
+
+          {isEditing && existingExpense?.addedBy ? (
+            <View style={styles.addedByRow}>
+              <Ionicons name="person-outline" size={14} color={theme.textSecondary} />
+              <Text style={[styles.addedByText, { color: theme.textSecondary }]}>
+                {t("expense.addedBy", { name: existingExpense.addedBy })}
+              </Text>
+            </View>
+          ) : null}
+        </ScrollView>
+
+        <View style={styles.buttons}>
+          <Button
+            title={isEditing ? t("expense.update") : t("expense.save")}
+            onPress={handleSave}
+            disabled={!canSave}
+          />
+
+          {isEditing && (
+            <Button
+              title={t("expense.delete")}
+              onPress={handleDeleteExpense}
+              variant="destructive"
+            />
           )}
         </View>
-
-        {showPicker && (
-          <DateTimePicker
-            value={dayjs(date).toDate()}
-            mode="date"
-            maximumDate={dayjs().toDate()}
-            onChange={handleDatePick}
-          />
-        )}
-
-        {isEditing && existingExpense?.addedBy ? (
-          <View style={styles.addedByRow}>
-            <Ionicons name="person-outline" size={14} color={theme.textSecondary} />
-            <Text style={[styles.addedByText, { color: theme.textSecondary }]}>
-              {t("expense.addedBy", { name: existingExpense.addedBy })}
-            </Text>
-          </View>
-        ) : null}
-
-        <View style={styles.spacer} />
-
-        <Button
-          title={isEditing ? t("expense.update") : t("expense.save")}
-          onPress={handleSave}
-          disabled={!canSave}
-        />
-
-        {isEditing && (
-          <Button
-            title={t("expense.delete")}
-            onPress={handleDeleteExpense}
-            variant="destructive"
-          />
-        )}
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -340,10 +352,15 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingHorizontal: Spacing.three,
-    gap: 12,
   },
-  spacer: {
-    flex: 1,
+  scrollContent: {
+    gap: 12,
+    paddingBottom: 12,
+  },
+  buttons: {
+    gap: 12,
+    paddingTop: 12,
+    paddingBottom: Spacing.two,
   },
   titleInput: {
     fontSize: 16,
